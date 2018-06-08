@@ -8,7 +8,7 @@ public class Game extends Applet {
     private static Board b = new Board();
 
     /**
-     * Draws the board and sets up the pieces
+     * Erstelle das Spielbrett und setze die Steine
      */
     public static void main(String[] args) {
         JFrame frame = new JFrame();

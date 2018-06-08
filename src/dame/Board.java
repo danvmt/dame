@@ -22,32 +22,16 @@ public class Board extends JPanel implements MouseListener{
     private Ai ai;
     private boolean tie = false;
 
-    /**
-     * Creates a new board with an ai player and mouse listeners
-     */
     public Board() {
         addMouseListener(this);
         ai = new Ai(color.BLACK);
     }
 
-    /**
-     * Creates a new board with pieces in the
-     * same locations as boardColor
-     * @param boardColor the location of the pieces
-     */
     public Board(color[][] boardColor) {
         this();
         this.boardColor = boardColor;
     }
 
-    /**
-     * Creates a new board with pieces in the
-     * same locations as boardColor and with numRed
-     * red pieces and numBlack black pieces
-     * @param boardColor the location of the pieces
-     * @param numRed the number of red pieces
-     * @param numBlack the number of black pieces
-     */
     public Board(color[][] boardColor, int numRed, int numBlack) {
         this();
         this.boardColor = boardColor;
@@ -56,15 +40,11 @@ public class Board extends JPanel implements MouseListener{
     }
 
     /**
-     * Creates a new board with pieces in the
-     * same locations as boardColor and with numRed
-     * red pieces, numBlack black pieces, numRedKing
-     * red kings, and numBlackKing black kings
-     * @param boardColor the location of the pieces
-     * @param numRed the number of red pieces
-     * @param numBlack the number of black pieces
-     * @param numRedKing the number of red kings
-     * @param numBlackKing the number of black kings
+     * @param boardColor Position der Steine
+     * @param numRed Anzahl rote Steine
+     * @param numBlack Anzahl schwarze Steine
+     * @param numRedKing Anzahl roter Damen
+     * @param numBlackKing Anzahl schwarzer Damen
      */
     public Board(color[][] boardColor, int numRed, int numBlack, int numRedKing, int numBlackKing) {
         this(boardColor, numRed, numBlack);
@@ -72,65 +52,49 @@ public class Board extends JPanel implements MouseListener{
         this.blackKing = numBlackKing;
     }
 
-    /**
-     * @return the number of red pieces on the board
-     */
     public int getNumRed() {
         return redCount;
     }
 
-    /**
-     * @return the number of red kings on the board
-     */
     public int getNumRedKing() {
         return redKing;
     }
 
-    /**
-     * @return the number of black pieces on the board
-     */
     public int getNumBlack() {
         return blackCount;
     }
 
-    /**
-     * @return the number of black kings on the board
-     */
     public int getNumBlackKing() {
         return blackKing;
     }
 
     /**
-     * @return whether or not the last move was a jump
+     * Gibt an ob beim letzten Zug ein Gegner geschlagen wurde
      */
-    public boolean isJumped() {return jumped;}
+    public boolean isJumped() {
+    	return jumped;
+    }
 
     /**
-     * @return the weighted score of the board
+     * Stärke (Gewicht) der roten Figuren. Eine Dame zählt dreifach
      */
     public int getRedWeightedScore() {
         return redCount - redKing + (3 * redKing);
     }
 
     /**
-     * @return the weighted score of the board
+     * Stärke (Gewicht) der schwarzen Figuren. Eine Dame zählt dreifach
      */
     public int getBlackWeightedScore() {
         return blackCount - blackKing + (3 * blackKing);
     }
 
-    /**
-     * Sets the player to color
-     * @param color the color the player will be set to
-     */
     public void setPlayer(color color) {
         player = color;
     }
 
     /**
-     * Handles moving the piece that was selected and updating the
-     * board
-     * @param evt where the piece was dragged to
+     * Verarbeitung des Mausklicks/Stein drag
      */
     public void mouseReleased(MouseEvent evt) {
         int col = evt.getX() / 75;
@@ -159,12 +123,6 @@ public class Board extends JPanel implements MouseListener{
 
     }
 
-    /**
-     * Handles repainting the board, multiple jumps, changing the player
-     * and checking for a winner
-     * @param move the move that was made
-     * @param crowned whether or not the piece was crowned on the move
-     */
     public void updateBoard(Move move, boolean crowned) {
         // Checks for winner
         if (blackCount == 0) {
@@ -198,10 +156,6 @@ public class Board extends JPanel implements MouseListener{
         repaint();
     }
 
-    /**
-     * Removes the intial message
-     * @param evt the mouse click
-     */
     public void mouseClicked(MouseEvent evt) {
         if (initial) {
             initial = false;
@@ -214,14 +168,12 @@ public class Board extends JPanel implements MouseListener{
     public void mouseExited(MouseEvent evt) { }
 
     /**
-     * Checks for a tie and gets all the possible moves for the chosen piece
-     * @param evt the location of the piece that was chosen
+     * Bestimmt alle gültigen Positionen um den Stein zu platzieren
      */
     public void mousePressed(MouseEvent evt) {
         int col = evt.getX() / 75;
         int row = evt.getY() / 75;
 
-        // Check for tie
         if (getAllLegalMovesForColor(player).size() == 0) {
             if (player == color.RED) {
                 player = color.BLACK;
@@ -234,7 +186,6 @@ public class Board extends JPanel implements MouseListener{
             }
         }
 
-        // Get possible moves based on whether the last move was a jump
         if (col >= 0 && col < 8 && row >=0 && row < 8) {
             if (jumped) {
                 moves = getJumps(row, col);
@@ -245,13 +196,11 @@ public class Board extends JPanel implements MouseListener{
     }
 
     /**
-     * Deletes the piece that was jumped over
-     * @param move the move that was made
+     * Entfernt einen geschlagenen Stein
      */
     public void handleJump(Move move) {
         Pair<Integer, Integer> spaceSkipped = move.getSpaceInbetween();
 
-        // Verifies that jump was made
         if (spaceSkipped.getKey() != move.currRow && spaceSkipped.getKey() != move.moveRow &&
                 spaceSkipped.getValue() != move.moveCol && spaceSkipped.getValue() != move.currCol) {
             if (boardColor[spaceSkipped.getKey()][spaceSkipped.getValue()] == color.RED_KING) {
@@ -274,16 +223,13 @@ public class Board extends JPanel implements MouseListener{
     }
 
     /**
-     * Get all the legal jumps from the given location
-     * @param row the row of the piece
-     * @param col the column of the piece
-     * @return an array of all legal jumps
+     * Bestimmt alle möglichkeiten um von der aktuellen Position Gegner zu schlagen
+     * Damen können rückwärts schlagen
      */
     public ArrayList<Move> getJumps(int row, int col) {
         ArrayList<Move> jumps = new ArrayList<>();
         color chosenPiece = getInfoAtPosition(row, col);
 
-        // Get red jumps
         if (player == color.RED) {
             if (chosenPiece == color.RED || chosenPiece == color.RED_KING) {
                 if (getInfoAtPosition(row + 1, col + 1) == color.BLACK ||
@@ -300,7 +246,6 @@ public class Board extends JPanel implements MouseListener{
                 }
             }
 
-            // Get backward jumps
             if (chosenPiece == color.RED_KING) {
                 if (getInfoAtPosition(row - 1, col + 1) == color.BLACK ||
                         getInfoAtPosition(row - 1, col + 1) == color.BLACK_KING) {
@@ -314,7 +259,7 @@ public class Board extends JPanel implements MouseListener{
                     }
                 }
             }
-        } else if (player == color.BLACK) { // Get black jumps
+        } else if (player == color.BLACK) {
             if (chosenPiece == color.BLACK || chosenPiece == color.BLACK_KING) {
                 if (getInfoAtPosition(row - 1, col + 1) == color.RED ||
                         getInfoAtPosition(row - 1, col + 1) == color.RED_KING) {
@@ -330,7 +275,6 @@ public class Board extends JPanel implements MouseListener{
                 }
             }
 
-            // Get backwards jumps
             if (chosenPiece == color.BLACK_KING) {
                 if (getInfoAtPosition(row + 1, col + 1) == color.RED ||
                         getInfoAtPosition(row + 1, col + 1) == color.RED_KING) {
@@ -350,27 +294,16 @@ public class Board extends JPanel implements MouseListener{
     }
 
     /**
-     * Gets all the legal moves for the current player at the given location
-     * @param row a row
-     * @param col a column
-     * @return all legal moves at position row, col for the current player
+     * Bestimmt alle möglichen Züge
      */
     public ArrayList<Move> getLegalMovesForPlayer(int row, int col) {
         return getLegalMovesForColorAtPosition(player, row, col);
     }
 
-    /**
-     * Get all the legal moves for the given color at the given location
-     * @param color the color whose moves will be found
-     * @param row a row
-     * @param col a column
-     * @return all legal moves at position row, col for color
-     */
     public ArrayList<Move> getLegalMovesForColorAtPosition(color color, int row, int col) {
         Board.color chosenPiece = getInfoAtPosition(row, col);
         ArrayList<Move> moves = new ArrayList<>();
 
-        // Get red moves
         if (color == Board.color.RED) {
             if (chosenPiece == Board.color.RED || chosenPiece == Board.color.RED_KING) {
                 if (getInfoAtPosition(row + 1, col + 1) == Board.color.EMPTY)
@@ -386,7 +319,7 @@ public class Board extends JPanel implements MouseListener{
                     moves.add(new Move(row, col, row - 1, col - 1));
 
             }
-        } else if (color == Board.color.BLACK){ // Get black moves
+        } else if (color == Board.color.BLACK){
             if (chosenPiece == Board.color.BLACK || chosenPiece == Board.color.BLACK_KING) {
                 if (getInfoAtPosition(row - 1, col + 1) == Board.color.EMPTY)
                     moves.add(new Move(row, col, row - 1, col + 1));
@@ -401,22 +334,15 @@ public class Board extends JPanel implements MouseListener{
             }
         }
 
-        // Add jumps
         ArrayList<Move> jumps = getJumps(row, col);
         moves.addAll(jumps);
         return moves;
     }
 
-    /**
-     * Get all possible moves for the given color
-     * @param color the color whose moves will be found
-     * @return all legal moves for color
-     */
     public ArrayList<Move> getAllLegalMovesForColor(color color) {
         ArrayList<Move> moves = new ArrayList<>();
         int count = 0;
 
-        // Loop through board and get moves at each location
         for (int row = 0; row < 8; row++) {
             for (int col = 0; col < 8; col++) {
                 Board.color currPosition = getInfoAtPosition(row, col);
@@ -425,7 +351,6 @@ public class Board extends JPanel implements MouseListener{
                     count++;
                 }
 
-                // Get king moves
                 if (color == Board.color.RED && currPosition == Board.color.RED_KING){
                     moves.addAll(getLegalMovesForColorAtPosition(color, row, col));
                     count++;
@@ -434,7 +359,6 @@ public class Board extends JPanel implements MouseListener{
                     count++;
                 }
 
-                // Stop if all the pieces of the color have been found
                 if (count == 12) {
                     return moves;
                 }
@@ -444,16 +368,13 @@ public class Board extends JPanel implements MouseListener{
     }
 
     /**
-     * Moves a piece
-     * @param move the move that will be made
-     * @return whether or not a king was made
+     * Stein wird bewegt
+     * Wandelt in Dame um, falls auf der Stein auf der anderen Seite ankommt
      */
     public boolean movePiece(Move move) {
-        // Changes location of piece
         color temp = boardColor[move.currRow][move.currCol];
         boardColor[move.currRow][move.currCol] = color.EMPTY;
 
-        // handles king
         if (player == color.RED && move.moveRow == 7) {
             boardColor[move.moveRow][move.moveCol] = color.RED_KING;
             redKing += 1;
@@ -468,10 +389,6 @@ public class Board extends JPanel implements MouseListener{
         }
     }
 
-    /**
-     * Repaints the board based on the status of the game
-     * @param graphic what will be painted
-     */
     public void paintComponent(Graphics graphic) {
         // Creates checker board
         for (int row = 0; row < 8; row++) {
@@ -485,14 +402,13 @@ public class Board extends JPanel implements MouseListener{
 
             }
         }
-        // Initial message
+        
         if (initial == true) {
             graphic.setColor(Color.RED);
             graphic.setFont(new Font("Helvetica", Font.PLAIN, 20));
             graphic.drawString("Clicke um das Spiel zu starten", 85, 300);
         }
 
-        // Winner message
         if (winner != color.NULL) {
             graphic.setColor(Color.RED);
             if (winner == color.RED) {
@@ -502,12 +418,12 @@ public class Board extends JPanel implements MouseListener{
                 graphic.setFont(new Font("Helvetica", Font.PLAIN, 90));
                 graphic.drawString("Blau gewinnt", 30, 300);
             }
-        } else if (tie) { // Tie message
+        } else if (tie) {
             graphic.setColor(Color.RED);
             graphic.setFont(new Font("Helvetica", Font.PLAIN, 100));
             graphic.drawString("Unentschieden", 225, 300);
 
-        } else { // Adds pieces if game still in progress
+        } else {
             for (int row = 0; row < 8; row++) {
                 for (int col = 0; col < 8; col++) {
 
@@ -542,8 +458,7 @@ public class Board extends JPanel implements MouseListener{
     }
 
     /**
-     * Places twelve pieces of each color in their
-     * initial positions
+     * Startaufstellung
      */
     public void placePieces() {
         for (int row = 0; row < 8; row++) {
@@ -563,12 +478,6 @@ public class Board extends JPanel implements MouseListener{
         }
     }
 
-    /**
-     * Returns the type of piece at the given position
-     * @param row a row
-     * @param col a column
-     * @return a color
-     */
     public color getInfoAtPosition(int row, int col) {
         if (row < 0 || row > 7 || col < 0 || col > 7) {
             return color.NULL;
@@ -576,10 +485,6 @@ public class Board extends JPanel implements MouseListener{
         return boardColor[row][col];
     }
 
-    /**
-     * Creates a string representation of the board
-     * @return a String version of the board
-     */
     public String toString() {
         String string = "";
         for (int row = 0; row < 8; row++) {
@@ -611,12 +516,6 @@ public class Board extends JPanel implements MouseListener{
         return string;
     }
 
-    /**
-     * Determines if both boards have the same pieces at the
-     * same locations
-     * @param other a board
-     * @return if the boards are equal
-     */
     public boolean equals(Board other) {
         for (int row = 0; row < 8; row++) {
             for (int col = 0; col < 8; col++) {
@@ -629,7 +528,7 @@ public class Board extends JPanel implements MouseListener{
     }
 
     /**
-     * All possible pieces that can be on the board
+     * mögliche Stati der Felder
      */
     public enum color {
         BLACK,
