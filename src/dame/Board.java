@@ -19,7 +19,7 @@ public class Board extends JPanel implements MouseListener{
     private int redKing = 0;
     private color winner = color.NULL;
     private boolean initial = true;
-    private AiMove ai;
+    private Ai ai;
     private boolean tie = false;
 
     /**
@@ -27,7 +27,7 @@ public class Board extends JPanel implements MouseListener{
      */
     public Board() {
         addMouseListener(this);
-        ai = new AiMove(color.BLACK);
+        ai = new Ai(color.BLACK);
     }
 
     /**
@@ -489,7 +489,7 @@ public class Board extends JPanel implements MouseListener{
         if (initial == true) {
             graphic.setColor(Color.RED);
             graphic.setFont(new Font("Helvetica", Font.PLAIN, 20));
-            graphic.drawString("WELCOME TO CHECKERS! CLICK TO BEGIN", 85, 300);
+            graphic.drawString("Clicke um das Spiel zu starten", 85, 300);
         }
 
         // Winner message
@@ -497,15 +497,15 @@ public class Board extends JPanel implements MouseListener{
             graphic.setColor(Color.RED);
             if (winner == color.RED) {
                 graphic.setFont(new Font("Helvetica", Font.PLAIN, 100));
-                graphic.drawString("RED WINS", 50, 300);
+                graphic.drawString("Rot gewinnt", 50, 300);
             } else {
                 graphic.setFont(new Font("Helvetica", Font.PLAIN, 90));
-                graphic.drawString("BLACK WINS", 30, 300);
+                graphic.drawString("Blau gewinnt", 30, 300);
             }
         } else if (tie) { // Tie message
             graphic.setColor(Color.RED);
             graphic.setFont(new Font("Helvetica", Font.PLAIN, 100));
-            graphic.drawString("TIE", 225, 300);
+            graphic.drawString("Unentschieden", 225, 300);
 
         } else { // Adds pieces if game still in progress
             for (int row = 0; row < 8; row++) {

@@ -2,7 +2,7 @@ package dame;
 
 import java.util.ArrayList;
 
-public class AiMove {
+public class Ai {
 
     private Board.color color;
     private Board.color oppColor;
@@ -12,7 +12,7 @@ public class AiMove {
      * Creates a new aiMove with the color of its pieces
      * @param color the color of the pieces the ai will move
      */
-    public AiMove(Board.color color) {
+    public Ai(Board.color color) {
         this.color = color;
         if (color == Board.color.RED) {
             oppColor = Board.color.BLACK;
