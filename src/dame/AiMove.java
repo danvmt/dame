@@ -1,27 +1,23 @@
-package gameLogic;
-
+package dame;
 
 import java.util.ArrayList;
 
-/**
- * Created by Victoria
- */
-public class aiMove {
+public class AiMove {
 
-    private board.color color;
-    private board.color oppColor;
+    private Board.color color;
+    private Board.color oppColor;
     private Tree descisionTree;
     private Move lastMove;
     /**
      * Creates a new aiMove with the color of its pieces
      * @param color the color of the pieces the ai will move
      */
-    public aiMove(board.color color) {
+    public AiMove(Board.color color) {
         this.color = color;
-        if (color == board.color.RED) {
-            oppColor = board.color.BLACK;
+        if (color == Board.color.RED) {
+            oppColor = Board.color.BLACK;
         } else {
-            oppColor = board.color.RED;
+            oppColor = Board.color.RED;
         }
     }
 
@@ -30,7 +26,7 @@ public class aiMove {
      * @param board the current state of the board
      * @return the move picked by the ai
      */
-    public Move getAIMove(board board) {
+    public Move getAIMove(Board board) {
         descisionTree = makeDescisionTree(board);
         lastMove = pickMove();
         return lastMove;
@@ -39,7 +35,7 @@ public class aiMove {
     /**
      * @return the color of the ai
      */
-    public board.color getColor() {
+    public Board.color getColor() {
         return color;
     }
 
@@ -49,19 +45,19 @@ public class aiMove {
      * @param board the board that the tree will be based on
      * @return a tree with all possible moves
      */
-    private Tree makeDescisionTree(board board) {
+    private Tree makeDescisionTree(Board board) {
         Tree mainTree = new Tree(board, null, score(board));
         ArrayList<Move> moves;
         // Handles multiple jumps
         if (board.isJumped()) {
-            moves  = board.getJumps(lastMove.movRow, lastMove.movCol);
+            moves  = board.getJumps(lastMove.moveRow, lastMove.moveCol);
         } else {
             moves = board.getAllLegalMovesForColor(color);
         }
 
         for (Move move : moves) {
             // Make second row
-            board temp = copyBoard(board);
+            Board temp = copyBoard(board);
             temp.movePiece(move);
             temp.handleJump(move);
             Tree firstLayer = new Tree(temp, move, score(temp));
@@ -69,7 +65,7 @@ public class aiMove {
 
             for (Move sMove : secondMoves) {
                 // Make third row
-                board temp2 = copyBoard(temp);
+                Board temp2 = copyBoard(temp);
                 temp2.movePiece(sMove);
                 temp2.handleJump(sMove);
                 Tree secondLayer = new Tree(temp2, sMove, score(temp2));
@@ -77,7 +73,7 @@ public class aiMove {
 
                 for (Move tMove : thirdMoves) {
                     // Make fourth row
-                    board temp3 = copyBoard(temp2);
+                    Board temp3 = copyBoard(temp2);
                     temp3.movePiece(tMove);
                     temp3.handleJump(tMove);
 
@@ -131,8 +127,8 @@ public class aiMove {
      * @param board the board that will be scored
      * @return the score of the given board
      */
-    private int score(board board) {
-        if (color == gameLogic.board.color.RED) {
+    private int score(Board board) {
+        if (color == dame.Board.color.RED) {
             return board.getRedWeightedScore() - board.getBlackWeightedScore();
         } else {
             return board.getRedWeightedScore() - board.getRedWeightedScore();
@@ -144,14 +140,14 @@ public class aiMove {
      * @param board the board that will be copied
      * @return a copy of the given board
      */
-    private board copyBoard(board board) {
-        gameLogic.board.color[][] color = new board.color[8][8];
+    private Board copyBoard(Board board) {
+        dame.Board.color[][] color = new Board.color[8][8];
         for (int row = 0; row < 8; row++) {
             for (int col = 0; col < 8; col++) {
                 color[row][col] = board.getInfoAtPosition(row, col);
             }
         }
-        return new board(color, board.getNumRed(), board.getNumBlack(), board.getNumRedKing(), board.getNumBlackKing());
+        return new Board(color, board.getNumRed(), board.getNumBlack(), board.getNumRedKing(), board.getNumBlackKing());
     }
 
 

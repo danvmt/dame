@@ -1,14 +1,11 @@
-package gameLogic;
+package dame;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-/**
- * Created by Victoria
- */
 public class Tree {
-    private board node;
+    private Board node;
     private Move move;
     private int score;
     private ArrayList<Tree> children;
@@ -20,7 +17,7 @@ public class Tree {
      * @param score the score of the tree
      * @param children the children of the node
      */
-    public Tree(board node, Move move, int score, Tree ... children) {
+    public Tree(Board node, Move move, int score, Tree ... children) {
         this.node = node;
         this.children = new ArrayList<>(Arrays.asList(children));
         this.score = score;
@@ -28,9 +25,9 @@ public class Tree {
     }
 
     /**
-     * @return the board of the tree
+     * @return the Board of the tree
      */
-    public board getBoard() {return node;}
+    public Board getBoard() {return node;}
 
     /**
      * @return the move of the tree

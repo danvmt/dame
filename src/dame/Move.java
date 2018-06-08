@@ -1,25 +1,22 @@
-package gameLogic;
+package dame;
 
 import javafx.util.Pair;
 
-/**
- * Created by Victoria
- */
 public class Move {
-    public int currRow, currCol, movRow, movCol;
+    public int currRow, currCol, moveRow, moveCol;
 
     /**
      * Creates a new move
      * @param currRow the current row of the piece
      * @param currCol the current column of the piece
-     * @param movRow the row the piece will be moved to
-     * @param movCol the column the piece will be moved to
+     * @param moveRow the row the piece will be moved to
+     * @param moveCol the column the piece will be moved to
      */
-    public Move(int currRow, int currCol, int movRow, int movCol) {
+    public Move(int currRow, int currCol, int moveRow, int moveCol) {
         this.currRow = currRow;
         this.currCol = currCol;
-        this.movRow = movRow;
-        this.movCol = movCol;
+        this.moveRow = moveRow;
+        this.moveCol = moveCol;
     }
 
     /**
@@ -27,7 +24,7 @@ public class Move {
      * @return the row, col location of the space
      */
     public Pair<Integer, Integer> getSpaceInbetween() {
-        return new Pair<>((currRow + movRow) / 2, (currCol + movCol) / 2);
+        return new Pair<>((currRow + moveRow) / 2, (currCol + moveCol) / 2);
     }
 
     /**
@@ -35,6 +32,6 @@ public class Move {
      * @return a string version of a move
      */
     public String toString() {
-        return "current: (" + currRow + ", " + currCol + ") + next: (" + movRow + "," + movCol + ")";
+        return "current: (" + currRow + ", " + currCol + ") + next: (" + moveRow + "," + moveCol + ")";
     }
 }
